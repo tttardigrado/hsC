@@ -8,13 +8,12 @@ import Syntax
 %tokentype { Token }
 %error { parseError }
 
-%nonassoc '>' '<' '<=' '>=' '==' '!=' '!'
+%nonassoc '>' '<' '<=' '>=' '==' '!=' '!' ':=' '+=' '-=' '*=' '/=' '%='
 %left '+' '-'
 %left '*' '/' '%'
 %left '&&' '||'
 %left '<->' '<>' '->'
 %left ';'
-%left ':='
 
 %token
     int   { TInt  $$  }
@@ -26,6 +25,13 @@ import Syntax
     '*'   { TMul      }
     '/'   { TDiv      }
     '%'   { TMod      }
+
+    ':='  { TSet      }
+    '+='  { TAddEq    }
+    '-='  { TSubEq    }
+    '*='  { TMulEq    }
+    '/='  { TDivEq    }
+    '%='  { TModEq    }
     
     '=='  { TEq       }
     '!='  { TNeq      }
@@ -49,7 +55,6 @@ import Syntax
     else  { TElse     }
     while { TWhile    }
     
-    ':='  { TSet      }
     ';'   { TSemi     }
     '('   { TLParen   }
     ')'   { TRParen   }
@@ -58,14 +63,19 @@ import Syntax
 
 %%
 
-Stmt  : skip ';'                                 { Skip             }
-      | let var ':=' IExpr ';'                   { Let   $2 $4      }
-      | '{' Stmts '}'                            { Blk   $2         }
-      | print '(' IExpr ')' ';'                  { Print $3         }
-      | var ':=' IExpr ';'                       { Set   $1 $3      }
-      | while '(' BExpr ')' Stmt                 { While $3 $5      }
-      | if '(' BExpr ')' Stmt                    { If    $3 $5 Skip }
-      | if '(' BExpr ')' Stmt else Stmt          { If    $3 $5 $7   }
+Stmt  : skip ';'                                 { Skip                           }
+      | let var ':=' IExpr ';'                   { Let   $2 $4                    }
+      | '{' Stmts '}'                            { Blk   $2                       }
+      | print '(' IExpr ')' ';'                  { Print $3                       }
+      | var ':=' IExpr ';'                       { Set   $1 $3                    }
+      | var '+=' IExpr ';'                       { Set   $1 (Aop Add (Var $1) $3) }
+      | var '-=' IExpr ';'                       { Set   $1 (Aop Sub (Var $1) $3) }
+      | var '*=' IExpr ';'                       { Set   $1 (Aop Mul (Var $1) $3) }
+      | var '/=' IExpr ';'                       { Set   $1 (Aop Div (Var $1) $3) }
+      | var '%=' IExpr ';'                       { Set   $1 (Aop Mod (Var $1) $3) }
+      | while '(' BExpr ')' Stmt                 { While $3 $5                    }
+      | if '(' BExpr ')' Stmt                    { If    $3 $5 Skip               }
+      | if '(' BExpr ')' Stmt else Stmt          { If    $3 $5 $7                 }
       | for '(' var ';' IExpr ';' IExpr ')' Stmt { Blk   [Let $3 $5, While (Cop Lt (Var $3) $7) (Blk [$9, Set $3 (Aop Add (Var $3) (Int 1))])]}
       
 

@@ -12,7 +12,12 @@ $white+                                     ;
 "//".*                                      ;
 
 -- Attributions
-":="                                        { \_ -> TSet }
+":="                                        { \_ -> TSet   }
+"+="                                        { \_ -> TAddEq }
+"-="                                        { \_ -> TSubEq }
+"*="                                        { \_ -> TMulEq }
+"/="                                        { \_ -> TDivEq }
+"%="                                        { \_ -> TModEq }
 
 -- Arithmetic Ops
 "+"                                         { \_ -> TAdd }
@@ -71,6 +76,11 @@ data Token
   | TBool Bool      -- bool value
   | TIdent String   -- variable identifier
   | TSet            -- :=
+  | TAddEq          -- +=
+  | TSubEq          -- -=
+  | TMulEq          -- *=
+  | TDivEq          -- /=
+  | TModEq          -- %=
   | TLet            -- let
   | TAdd            -- +
   | TSub            -- -
