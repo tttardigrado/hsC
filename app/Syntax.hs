@@ -61,7 +61,7 @@ data Expr
   | Bop  BOp Expr Expr  -- e ∘ e
   | Not  Expr           -- !e
   | EIf  Expr Expr Expr -- (e) ? e : e
-  deriving (Show,Eq)
+  deriving (Eq)
 
 instance Show Expr where
   showsPrec p (Var x) = showsPrec p x
