@@ -68,7 +68,7 @@ $digit+                                     { \s -> TInt (read s) }
 "}"	                                        { \_ -> TRCurly }
 ";"	                                        { \_ -> TSemi   }
 ":"	                                        { \_ -> TDColon }
-
+"?"                                         { \_ -> TQMark  }
 
 {
 
@@ -108,6 +108,7 @@ data Token
   | TRCurly         -- }
   | TSemi           -- ;
   | TDColon         -- :
+  | TQMark          -- ?
   -- Identifiers
   | TLet            -- let
   | TIf             -- if

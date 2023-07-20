@@ -13,7 +13,7 @@ simplifyOne e = case e of
   Aop Mul (Int      0) _            -> Int 0      -- 0 * e2 = 0
   Aop Mul e1           (Int      1) -> e1         -- e1 * 1 = e1
   Aop Mul (Int      1) e2           -> e2         -- 1 * e2 = e2
-  Cop o   (Int      x) (Int      y) -> Bool $ cToOp o x y
+  
   Bop o   (Bool     x) (Bool     y) -> Bool $ bToOp o x y
   Bop And e1           (Bool  True) -> e1         -- e1 && True = e1
   Bop And (Bool  True) e2           -> e2         -- True && e2 = e2
@@ -23,16 +23,24 @@ simplifyOne e = case e of
   Bop Or  (Bool  True) _            -> Bool True  -- True || e2 = True
   Bop Or  e1           (Bool False) -> e1         -- e1 || False = e1
   Bop Or  (Bool False) e2           -> e2         -- False || e2 = e2
+
+  EIf (Bool  True) e1  _            -> e1
+  EIf (Bool False) _   e2           -> e2
+  
+  Cop o   (Int      x) (Int      y) -> Bool $ cToOp o x y  
   Not                  (Bool     x) -> Bool $ not x
   exp                               -> exp
+
 
 simplifyExpr :: Expr -> Expr
 simplifyExpr e = case e of
   Aop o e1 e2 -> simplifyOne $ Aop o (simplifyExpr e1) (simplifyExpr e2)
   Cop o e1 e2 -> simplifyOne $ Cop o (simplifyExpr e1) (simplifyExpr e2)
   Bop o e1 e2 -> simplifyOne $ Bop o (simplifyExpr e1) (simplifyExpr e2)
+  EIf b e1 e2 -> simplifyOne $ EIf (simplifyExpr b) (simplifyExpr e1) (simplifyExpr e2)
   Not      e1 -> simplifyOne $ Not $ simplifyExpr e1
   exp         -> exp
+
 
 simplifyStmt :: Stmt -> Stmt
 simplifyStmt s = case s of

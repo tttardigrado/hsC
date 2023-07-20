@@ -8,6 +8,7 @@ import Syntax
 %tokentype { Token }
 %error { parseError }
 
+%nonassoc ':' '?'
 %nonassoc '=' '+=' '-=' '*=' '/=' '%='
 %left '&&' '||'
 %nonassoc '>' '<' '<=' '>=' '==' '!=' '!' 
@@ -59,6 +60,7 @@ import Syntax
     '{'   { TLCurly   }
     '}'   { TRCurly   }
     ':'   { TDColon   }
+    '?'   { TQMark    }
 
 %%
 
@@ -99,6 +101,7 @@ Expr  : var                                    { Var  $1       }
       | Expr '&&'  Expr                        { Bop And $1 $3 }
       | Expr '||'  Expr                        { Bop Or  $1 $3 }
       |       '!'  Expr                        { Not $2        }
+      | Expr '?' Expr ':' Expr                 { EIf $1 $3 $5  }
       | '(' Expr ')'                           { $2            }
 
 {

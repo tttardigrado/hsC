@@ -40,6 +40,11 @@ typeOfExpr ctx exp = case exp of
     checkExpr ctx TyBool e1
     checkExpr ctx TyBool e2
     Right TyBool
+  EIf b e1 e2 -> do
+    checkExpr ctx TyBool b
+    ty <- typeOfExpr ctx e1
+    checkExpr ctx ty e2
+    Right ty
   Not e -> do
     checkExpr ctx TyBool e
     Right TyBool

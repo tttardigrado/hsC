@@ -53,28 +53,33 @@ instance Show Type where
 
 -- Integer Expressions
 data Expr
-  = Var  Ident           -- x
-  | Int  Int             -- n
-  | Bool Bool            -- T or F
-  | Aop  AOp Expr Expr   -- e ∘ e
-  | Cop  COp Expr Expr   -- b ⪯ b
-  | Bop  BOp Expr Expr   -- e ∘ e
-  | Not  Expr            -- !e
-  deriving (Eq)
+  = Var  Ident          -- x
+  | Int  Int            -- n
+  | Bool Bool           -- T or F
+  | Aop  AOp Expr Expr  -- e ∘ e
+  | Cop  COp Expr Expr  -- b ⪯ b
+  | Bop  BOp Expr Expr  -- e ∘ e
+  | Not  Expr           -- !e
+  | EIf  Expr Expr Expr -- (e) ? e : e
+  deriving (Show,Eq)
 
-instance Show Expr where
+{-instance Show Expr where
   showsPrec p (Var x) = showsPrec p x
   showsPrec p (Int n) = showsPrec p n
   showsPrec p (Bool b) = showsPrec p b
   showsPrec p (Aop o e1 e2) = let q = precAOp o
     in showParen (p >= q) $ showsPrec q e1 . showString (show o) . showsPrec q e2  
-  showsPrec p (Cop o e1 e2) = let q = precCOp o
+  showsPrec p (Cop o e1 e2) = let q = 6
     in showParen (p >= q) $ showsPrec q e1 . showString (show o) . showsPrec q e2  
-  showsPrec p (Bop o e1 e2) = let q = precBOp o
+  showsPrec p (Bop o e1 e2) = let q = 5
     in showParen (p >= q) $ showsPrec q e1 . showString (show o) . showsPrec q e2  
   showsPrec p (Not e) = let q = 9
     in showParen (p >= q) $ showString "!" . showsPrec q e
-  
+  showsPrec p (EIf b e1 e2) = let q = 4
+    in showParen (p >= q) $ showsPrec q b
+                          . showString " ? " . showsPrec q e1
+                          . showString " : " . showsPrec q e2
+  -}
 -- Statements
 data Stmt
  = Let   Ident Type Expr      -- let x: t = e;
