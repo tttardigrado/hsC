@@ -106,6 +106,6 @@ Expr  : var                                    { Var  $1       }
 {
 
 parseError :: [Token] -> a
-parseError _ = error "Parse error"
+parseError t = error $ "Parse error " ++ show t
 
 }

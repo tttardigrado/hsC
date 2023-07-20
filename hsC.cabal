@@ -55,6 +55,7 @@ executable hsC
     other-modules:    Lexer
                  ,    Parser
                  ,    Syntax
+                 ,    TypeChecker
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
