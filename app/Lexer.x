@@ -11,6 +11,10 @@ tokens :-
 $white+                                     ;
 "//".*                                      ;
 
+-- Types
+"int"                                       { \_ -> TTInt  }
+"bool"                                      { \_ -> TTBool }
+
 -- Attributions
 "="                                         { \_ -> TSet   }
 "+="                                        { \_ -> TAddEq }
@@ -64,6 +68,7 @@ $digit+                                     { \s -> TInt (read s) }
 "{"                                         { \_ -> TLCurly }
 "}"	                                        { \_ -> TRCurly }
 ";"	                                        { \_ -> TSemi   }
+":"	                                        { \_ -> TDColon }
 
 
 {
@@ -72,13 +77,17 @@ data Token
   = TInt  Int       -- int value
   | TBool Bool      -- bool value
   | TIdent String   -- variable identifier
-  | TSet            -- :=
+  -- Types
+  | TTInt           -- int
+  | TTBool          -- bool
+  -- Assignement
+  | TSet            -- =
   | TAddEq          -- +=
   | TSubEq          -- -=
   | TMulEq          -- *=
   | TDivEq          -- /=
   | TModEq          -- %=
-  | TLet            -- let
+  -- Operations
   | TAdd            -- +
   | TSub            -- -
   | TMul            -- *
@@ -93,11 +102,15 @@ data Token
   | TAnd            -- &&
   | TOr             -- ||
   | TNot            -- !
+  -- Punctuation
   | TLParen         -- (
   | TRParen         -- )
   | TLCurly         -- {
   | TRCurly         -- }
   | TSemi           -- ;
+  | TDColon         -- :
+  -- Identifiers
+  | TLet            -- let
   | TIf             -- if
   | TThen           -- then
   | TElse           -- else
@@ -105,7 +118,8 @@ data Token
   | TFor            -- for
   | TPrint          -- print
   | TSkip           -- skip
-  deriving Show
+  deriving (Show)
+
 
 scanTokens = alexScanTokens
 

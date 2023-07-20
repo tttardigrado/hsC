@@ -15,28 +15,27 @@ data COp = Eq | Neq | Lt | Gt | Leq | Geq
 data BOp = And | Or
   deriving (Show, Enum, Eq)
 
--- Integer Expressions
-data IExpr
-  = Var Ident             -- x
-  | Int Int               -- n
-  | Aop AOp IExpr IExpr   -- i ∘ i
-  deriving (Show, Eq)
+data Type = TyInt | TyBool
+  deriving (Show, Enum, Eq)
 
--- Boolean Expressions
-data BExpr
-  = Bool Bool             -- T or F
-  | Cop COp IExpr IExpr   -- b ⪯ b
-  | Bop BOp BExpr BExpr   -- b ∘ b
-  | Not BExpr             -- !b
+-- Integer Expressions
+data Expr
+  = Var  Ident           -- x
+  | Int  Int             -- n
+  | Bool Bool            -- T or F
+  | Aop  AOp Expr Expr   -- e ∘ e
+  | Cop  COp Expr Expr   -- b ⪯ b
+  | Bop  BOp Expr Expr   -- e ∘ e
+  | Not  Expr            -- !e
   deriving (Show, Eq)
 
 -- Statements
 data Stmt
- = Skip                   -- skip
- | Let   Ident IExpr      -- let x := i;
- | Print IExpr            -- print(i);
- | Set   Ident IExpr      -- x := i;
- | While BExpr Stmt       -- while (b) s
- | If    BExpr Stmt Stmt  -- if (b) s else s
- | Blk   [Stmt]           -- { s; s; ... s; }
+ = Skip                  -- skip
+ | Let   Ident Type Expr -- let x: t := e;
+ | Print Expr            -- print(i);
+ | Set   Ident Expr      -- x := i;
+ | While Expr Stmt       -- while (b) s
+ | If    Expr Stmt Stmt  -- if (b) s else s
+ | Blk   [Stmt]          -- { s; s; ... s; }
  deriving (Show, Eq)
