@@ -41,9 +41,11 @@ simplifyStmt s = case s of
   Set    str ex -> Set str $ simplifyExpr ex
   Blk        xs -> Blk $ map simplifyStmt xs
   While  ex  st -> case simplifyExpr ex of
-                     Bool False -> Blk [] -- while (False) st => {}
-                     ex'        -> While ex st
+    Bool False -> Blk [] -- while (False) st => {}
+    ex'        -> case simplifyStmt st of
+      Blk [] -> Blk []
+      st'    -> While ex' st'
   If   ex s1 s2 -> case simplifyExpr ex of
-                     Bool True  -> s1 --if (true)  s1 s2 => s1
-                     Bool False -> s2 --if (false) s1 s2 => s2
-                     ex'        -> If ex' s1 s2 
+    Bool True  -> s1 --if (true)  s1 s2 => s1
+    Bool False -> s2 --if (false) s1 s2 => s2
+    ex'        -> If ex' s1 s2 
