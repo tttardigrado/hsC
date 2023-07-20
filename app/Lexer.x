@@ -12,7 +12,7 @@ $white+                                     ;
 "//".*                                      ;
 
 -- Attributions
-":="                                        { \_ -> TSet   }
+"="                                         { \_ -> TSet   }
 "+="                                        { \_ -> TAddEq }
 "-="                                        { \_ -> TSubEq }
 "*="                                        { \_ -> TMulEq }
@@ -29,9 +29,6 @@ $white+                                     ;
 -- Boolean Ops
 "&&"                                        { \_ -> TAnd }
 "||"                                        { \_ -> TOr  }
-"<>"                                        { \_ -> TXor }
-"<->"                                       { \_ -> TEqv }
-"->"                                        { \_ -> TImp }
 "!"                                         { \_ -> TNot }
 
 
@@ -95,9 +92,6 @@ data Token
   | TGeq            -- >=
   | TAnd            -- &&
   | TOr             -- ||
-  | TXor            -- <>
-  | TEqv            -- <->
-  | TImp            -- ->
   | TNot            -- !
   | TLParen         -- (
   | TRParen         -- )

@@ -12,7 +12,7 @@ data COp = Eq | Neq | Lt | Gt | Leq | Geq
   deriving (Show, Enum, Eq)
 
 -- Enum of boolean operations
-data BOp = And | Or | Xor | Eqv | Imp
+data BOp = And | Or
   deriving (Show, Enum, Eq)
 
 -- Integer Expressions
