@@ -1,8 +1,8 @@
 module Main where
 
-import Parser ( parser )
-import Lexer ( scanTokens )
-import TypeChecker ( checkStmt )
+import Lexer (scanTokens)
+import Parser (parser)
+import TypeChecker (checkStmt)
 
 main :: IO ()
 main = do

@@ -46,8 +46,8 @@ $white+                                     ;
 
 -- Constants (Ints && Bools)
 $digit+                                     { \s -> TInt (read s) }
-"true"                                      { \_ -> TBool True    }
-"false"                                     { \_ -> TBool False   }
+"True"                                      { \_ -> TBool True    }
+"False"                                     { \_ -> TBool False   }
 
 
 -- Keywords

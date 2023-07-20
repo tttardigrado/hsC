@@ -8,11 +8,11 @@ import Syntax
 %tokentype { Token }
 %error { parseError }
 
-%nonassoc '>' '<' '<=' '>=' '==' '!=' '!' '=' '+=' '-=' '*=' '/=' '%='
+%nonassoc '=' '+=' '-=' '*=' '/=' '%='
+%left '&&' '||'
+%nonassoc '>' '<' '<=' '>=' '==' '!=' '!' 
 %left '+' '-'
 %left '*' '/' '%'
-%left '&&' '||'
-%left ';'
 
 %token
     int   { TInt  $$  }
