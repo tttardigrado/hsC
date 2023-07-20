@@ -60,6 +60,11 @@ checkStmt ctx stm = case stm of
     checkExpr ctx TyBool ex
     checkStmt ctx st
     Right ctx
+  For v e1 e2 st -> do
+    checkExpr ctx TyInt e1
+    checkExpr ctx TyInt e2
+    checkStmt ((v, TyInt) : ctx) st
+    Right ctx
   If ex s1 s2 -> do
     checkExpr ctx TyBool ex
     checkStmt ctx s1

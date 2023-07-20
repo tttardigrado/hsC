@@ -74,7 +74,7 @@ Stmt  : '{' Stmts '}'                          { Blk   $2                       
       | while '(' Expr ')' Stmt                { While $3 $5                    }
       | if '(' Expr ')' Stmt                   { If    $3 $5 (Blk [])           }
       | if '(' Expr ')' Stmt else Stmt         { If    $3 $5 $7                 }
-      | for '(' var ';' Expr ';' Expr ')' Stmt { Blk   [Let $3 TyInt $5, While (Cop Lt (Var $3) $7) (Blk [$9, Set $3 (Aop Add (Var $3) (Int 1))])]}
+      | for '(' var ';' Expr ';' Expr ')' Stmt { For   $3 $5 $7 $9              }
 
 Type  : tint                                   { TyInt     }
       | tbool                                  { TyBool    }

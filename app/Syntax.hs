@@ -77,10 +77,11 @@ instance Show Expr where
   
 -- Statements
 data Stmt
- = Let   Ident Type Expr -- let x: t = e;
- | Print Expr            -- print(i);
- | Set   Ident Expr      -- x = i;
- | While Expr Stmt       -- while (b) s
- | If    Expr Stmt Stmt  -- if (b) s else s
- | Blk   [Stmt]          -- { s; s; ... s; }
+ = Let   Ident Type Expr      -- let x: t = e;
+ | Print Expr                 -- print(i);
+ | Set   Ident Expr           -- x = i;
+ | While Expr Stmt            -- while (b) s
+ | For   Ident Expr Expr Stmt -- for (x; e; e) s
+ | If    Expr Stmt Stmt       -- if (b) s else s
+ | Blk   [Stmt]               -- { s; s; ... s; }
  deriving (Show, Eq)
