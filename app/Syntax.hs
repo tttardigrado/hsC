@@ -63,7 +63,7 @@ data Expr
   | EIf  Expr Expr Expr -- (e) ? e : e
   deriving (Show,Eq)
 
-{-instance Show Expr where
+instance Show Expr where
   showsPrec p (Var x) = showsPrec p x
   showsPrec p (Int n) = showsPrec p n
   showsPrec p (Bool b) = showsPrec p b
@@ -79,7 +79,7 @@ data Expr
     in showParen (p >= q) $ showsPrec q b
                           . showString " ? " . showsPrec q e1
                           . showString " : " . showsPrec q e2
-  -}
+
 -- Statements
 data Stmt
  = Let   Ident Type Expr      -- let x: t = e;
