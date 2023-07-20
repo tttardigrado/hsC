@@ -56,7 +56,6 @@ $digit+                                     { \s -> TInt (read s) }
 "while"                                     { \_ -> TWhile }
 "print"                                     { \_ -> TPrint }
 "let"                                       { \_ -> TLet   }
-"skip"                                      { \_ -> TSkip  }
 "for"                                       { \_ -> TFor   }
 
 -- Identifier
@@ -117,7 +116,6 @@ data Token
   | TWhile          -- while
   | TFor            -- for
   | TPrint          -- print
-  | TSkip           -- skip
   deriving (Show)
 
 

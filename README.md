@@ -7,9 +7,9 @@ Haskell compiler for a simple C-like language.
 * Keywords
     - [ ] Add `continue` keyword
     - [ ] Add `break` keyword
-    - [ ] Remove `skip` keyword
+    - [X] Remove `skip` keyword
 * Compiler phases
-    - [X] Add Type Checker
+    - [X] Add TypeChecker
     - [X] Add Optimizer
     - [ ] Add Intermediate Code
     - [ ] Add Code Generation

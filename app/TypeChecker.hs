@@ -46,7 +46,6 @@ typeOfExpr ctx exp = case exp of
 
 checkStmt :: Ctx Type -> Stmt -> Res (Ctx Type)
 checkStmt ctx stm = case stm of
-  Skip -> Right ctx
   Let v ty ex -> do
     checkExpr ctx ty ex
     Right ((v, ty) : ctx)

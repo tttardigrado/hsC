@@ -36,13 +36,12 @@ simplifyExpr e = case e of
 
 simplifyStmt :: Stmt -> Stmt
 simplifyStmt s = case s of
-  Skip          -> Skip
   Let str ty ex -> Let str ty $ simplifyExpr ex
   Print      ex -> Print $ simplifyExpr ex
   Set    str ex -> Set str $ simplifyExpr ex
   Blk        xs -> Blk $ map simplifyStmt xs
   While  ex  st -> case simplifyExpr ex of
-                     Bool False -> Skip -- while (False) st => skip
+                     Bool False -> Blk [] -- while (False) st => {}
                      ex'        -> While ex st
   If   ex s1 s2 -> case simplifyExpr ex of
                      Bool True  -> s1 --if (true)  s1 s2 => s1

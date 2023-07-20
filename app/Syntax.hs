@@ -77,8 +77,7 @@ instance Show Expr where
   
 -- Statements
 data Stmt
- = Skip                  -- skip
- | Let   Ident Type Expr -- let x: t = e;
+ = Let   Ident Type Expr -- let x: t = e;
  | Print Expr            -- print(i);
  | Set   Ident Expr      -- x = i;
  | While Expr Stmt       -- while (b) s

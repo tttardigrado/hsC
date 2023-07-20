@@ -49,7 +49,6 @@ import Syntax
     let   { TLet      }
     print { TPrint    }
     for   { TFor      }
-    skip  { TSkip     }
     if    { TIf       }
     else  { TElse     }
     while { TWhile    }
@@ -63,9 +62,8 @@ import Syntax
 
 %%
 
-Stmt  : skip ';'                               { Skip                           }
+Stmt  : '{' Stmts '}'                          { Blk   $2                       } 
       | let var ':' Type '=' Expr ';'          { Let   $2 $4 $6                 }
-      | '{' Stmts '}'                          { Blk   $2                       }
       | print '(' Expr ')' ';'                 { Print $3                       }
       | var '='  Expr ';'                      { Set   $1 $3                    }
       | var '+=' Expr ';'                      { Set   $1 (Aop Add (Var $1) $3) }
@@ -74,7 +72,7 @@ Stmt  : skip ';'                               { Skip                           
       | var '/=' Expr ';'                      { Set   $1 (Aop Div (Var $1) $3) }
       | var '%=' Expr ';'                      { Set   $1 (Aop Mod (Var $1) $3) }
       | while '(' Expr ')' Stmt                { While $3 $5                    }
-      | if '(' Expr ')' Stmt                   { If    $3 $5 Skip               }
+      | if '(' Expr ')' Stmt                   { If    $3 $5 (Blk [])           }
       | if '(' Expr ')' Stmt else Stmt         { If    $3 $5 $7                 }
       | for '(' var ';' Expr ';' Expr ')' Stmt { Blk   [Let $3 TyInt $5, While (Cop Lt (Var $3) $7) (Blk [$9, Set $3 (Aop Add (Var $3) (Int 1))])]}
 
