@@ -35,7 +35,6 @@ $white+                                     ;
 "||"                                        { \_ -> TOr  }
 "!"                                         { \_ -> TNot }
 
-
 --Comparations
 "=="                                        { \_ -> TEq  }
 "!="                                        { \_ -> TNeq }
@@ -57,6 +56,8 @@ $digit+                                     { \s -> TInt (read s) }
 "print"                                     { \_ -> TPrint }
 "let"                                       { \_ -> TLet   }
 "for"                                       { \_ -> TFor   }
+"break"                                     { \_ -> TBreak }
+"continue"                                  { \_ -> TCont  }
 
 -- Identifier
 [$alpha \_] [$alpha $digit \_]*             { \s -> TIdent s }
@@ -116,6 +117,8 @@ data Token
   | TElse           -- else
   | TWhile          -- while
   | TFor            -- for
+  | TBreak          -- break
+  | TCont           -- continue
   | TPrint          -- print
   deriving (Show)
 

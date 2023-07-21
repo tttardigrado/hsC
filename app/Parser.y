@@ -16,55 +16,59 @@ import Syntax
 %left '*' '/' '%'
 
 %token
-    int   { TInt  $$  }
-    bool  { TBool $$  }
-    var   { TIdent $$ }
+    int      { TInt  $$  }
+    bool     { TBool $$  }
+    var      { TIdent $$ }
 
-    tint  { TTInt     }
-    tbool { TTBool    }
+    tint     { TTInt     }
+    tbool    { TTBool    }
     
-    '+'   { TAdd      }
-    '-'   { TSub      }
-    '*'   { TMul      }
-    '/'   { TDiv      }
-    '%'   { TMod      }
+    '+'      { TAdd      }
+    '-'      { TSub      }
+    '*'      { TMul      }
+    '/'      { TDiv      }
+    '%'      { TMod      }
 
-    '='   { TSet      }
-    '+='  { TAddEq    }
-    '-='  { TSubEq    }
-    '*='  { TMulEq    }
-    '/='  { TDivEq    }
-    '%='  { TModEq    }
+    '='      { TSet      }
+    '+='     { TAddEq    }
+    '-='     { TSubEq    }
+    '*='     { TMulEq    }
+    '/='     { TDivEq    }
+    '%='     { TModEq    }
     
-    '=='  { TEq       }
-    '!='  { TNeq      }
-    '<'   { TLt       }
-    '>'   { TGt       }
-    '<='  { TLeq      }
-    '>='  { TGeq      }
+    '=='     { TEq       }
+    '!='     { TNeq      }
+    '<'      { TLt       }
+    '>'      { TGt       }
+    '<='     { TLeq      }
+    '>='     { TGeq      }
     
-    '&&'  { TAnd      }
-    '||'  { TOr       }
-    '!'   { TNot      }
+    '&&'     { TAnd      }
+    '||'     { TOr       }
+    '!'      { TNot      }
 
-    let   { TLet      }
-    print { TPrint    }
-    for   { TFor      }
-    if    { TIf       }
-    else  { TElse     }
-    while { TWhile    }
-    
-    ';'   { TSemi     }
-    '('   { TLParen   }
-    ')'   { TRParen   }
-    '{'   { TLCurly   }
-    '}'   { TRCurly   }
-    ':'   { TDColon   }
-    '?'   { TQMark    }
+    let      { TLet      }
+    print    { TPrint    }
+    for      { TFor      }
+    if       { TIf       }
+    else     { TElse     }
+    while    { TWhile    }
+    break    { TBreak    }
+    continue { TCont     }
+
+    ';'      { TSemi     }
+    '('      { TLParen   }
+    ')'      { TRParen   }
+    '{'      { TLCurly   }
+    '}'      { TRCurly   }
+    ':'      { TDColon   }
+    '?'      { TQMark    }
 
 %%
 
-Stmt  : '{' Stmts '}'                          { Blk   $2                       } 
+Stmt  : break ';'                              { Break                          }
+      | continue ';'                           { Continue                       } 
+      | '{' Stmts '}'                          { Blk   $2                       } 
       | let var ':' Type '=' Expr ';'          { Let   $2 $4 $6                 }
       | print '(' Expr ')' ';'                 { Print $3                       }
       | var '='  Expr ';'                      { Set   $1 $3                    }

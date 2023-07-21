@@ -26,7 +26,7 @@ simplifyOne e = case e of
 
   EIf (Bool  True) e1  _            -> e1
   EIf (Bool False) _   e2           -> e2
-  
+
   Cop o   (Int      x) (Int      y) -> Bool $ cToOp o x y  
   Not                  (Bool     x) -> Bool $ not x
   exp                               -> exp
@@ -42,24 +42,40 @@ simplifyExpr e = case e of
   exp         -> exp
 
 
+simplifyBlock :: [Stmt] -> [Stmt]
+simplifyBlock sts = case sts of
+  []           -> []
+  Break    : _ -> [Break]
+  Continue : _ -> [Continue]
+  x : xs       -> simplifyStmt x : simplifyBlock xs
+
 simplifyStmt :: Stmt -> Stmt
 simplifyStmt s = case s of
+  Break            -> Break
+  Continue         -> Continue
   Let    str ty ex -> Let str ty $ simplifyExpr ex
   Print         ex -> Print $ simplifyExpr ex
   Set       str ex -> Set str $ simplifyExpr ex
-  Blk           xs -> Blk $ map simplifyStmt xs
+
+  Blk sts -> case simplifyBlock sts of
+    [st] -> st -- { s } => s
+    sts' -> Blk sts'
   
   For str e1 e2 st -> case (simplifyExpr e1, simplifyExpr e2) of
     (Int x, Int y) | x >= y -> Blk []
     (e1', e2')              -> case simplifyStmt st of
-      Blk [] -> Blk []
-      st'    -> For str e1' e2' st'
-  
+      Blk []   -> Blk []
+      Break    -> Blk []
+      Continue -> Blk []
+      st'      -> For str e1' e2' st'
+
   While      ex st -> case simplifyExpr ex of
     Bool False -> Blk [] -- while (False) st => {}
     ex'        -> case simplifyStmt st of
-      Blk [] -> Blk []
-      st'    -> While ex' st'
+      Blk []   -> Blk []
+      Break    -> Blk []
+      Continue -> Blk []
+      st'      -> While ex' st'
   
   If      ex s1 s2 -> case simplifyExpr ex of
     Bool True  -> s1 --if (true)  s1 s2 => s1

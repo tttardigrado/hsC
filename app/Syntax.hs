@@ -82,7 +82,9 @@ instance Show Expr where
 
 -- Statements
 data Stmt
- = Let   Ident Type Expr      -- let x: t = e;
+ = Break                      -- break;
+ | Continue                   -- continue;
+ | Let   Ident Type Expr      -- let x: t = e;
  | Print Expr                 -- print(i);
  | Set   Ident Expr           -- x = i;
  | While Expr Stmt            -- while (b) s
