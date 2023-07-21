@@ -70,7 +70,7 @@ Stmt  : break ';'                              { Break                          
       | continue ';'                           { Continue                       } 
       | '{' Stmts '}'                          { Blk   $2                       } 
       | let var ':' Type '=' Expr ';'          { Let   $2 $4 $6                 }
-      | print '(' Expr ')' ';'                 { Print $3                       }
+      | print Expr  ';'                        { Print $2                       }
       | var '='  Expr ';'                      { Set   $1 $3                    }
       | var '+=' Expr ';'                      { Set   $1 (Aop Add (Var $1) $3) }
       | var '-=' Expr ';'                      { Set   $1 (Aop Sub (Var $1) $3) }
