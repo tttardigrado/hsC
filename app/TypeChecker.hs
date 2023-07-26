@@ -1,10 +1,11 @@
 module TypeChecker where
 
 import Syntax (Expr (..), Stmt (..), Type (..))
+import qualified Data.HashMap as M
 
 type Res a = Either String a
 
-type Ctx = [(String, Type)]
+type Ctx = M.Map String Type
 
 checkExpr :: Ctx -> Type -> Expr -> Res ()
 checkExpr ctx ty exp = do
@@ -19,7 +20,7 @@ checkExpr ctx ty exp = do
     ]
 
 getVarType :: Ctx -> String -> Res Type
-getVarType ctx var = case lookup var ctx of
+getVarType ctx var = case M.lookup var ctx of
   Just ty -> Right ty
   Nothing -> Left $ concat
     [ "Name Error: The variable "
@@ -67,11 +68,11 @@ checkStmt = check False where
       else Left "Error: Continue Statement occurs outside of a loop."
     
     Let v ty ex -> do
-      if v `elem` map fst ctx
+      if v `elem` M.keys ctx
       then Left $ concat ["Name Error: The variable ", v, " was redifined."]
       else do
         checkExpr ctx ty ex
-        Right ((v, ty) : ctx)
+        Right $ M.insert v ty ctx
     
     Print ex -> do
       checkExpr ctx TyInt ex
@@ -90,7 +91,7 @@ checkStmt = check False where
     For v e1 e2 st -> do
       checkExpr ctx TyInt e1
       checkExpr ctx TyInt e2
-      check True ((v, TyInt) : ctx) st
+      check True (M.insert v TyInt ctx) st
       Right ctx
     
     If ex s1 s2 -> do
