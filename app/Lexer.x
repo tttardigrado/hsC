@@ -23,6 +23,8 @@ $white+                                     ;
 "*="                                        { \_ -> TMulEq }
 "/="                                        { \_ -> TDivEq }
 "%="                                        { \_ -> TModEq }
+"<<="                                       { \_ -> TSLEq }
+">>="                                       { \_ -> TSREq }
 
 -- Arithmetic Ops
 "+"                                         { \_ -> TAdd }
@@ -30,6 +32,8 @@ $white+                                     ;
 "*"                                         { \_ -> TMul }
 "/"                                         { \_ -> TDiv }
 "%"                                         { \_ -> TMod }
+"<<"                                        { \_ -> TSL  }
+">>"                                        { \_ -> TSR  }
 
 -- Boolean Ops
 "&&"                                        { \_ -> TAnd }
@@ -92,12 +96,16 @@ data Token
   | TMulEq          -- *=
   | TDivEq          -- /=
   | TModEq          -- %=
+  | TSLEq           -- <<=
+  | TSREq           -- >>=
   -- Operations
   | TAdd            -- +
   | TSub            -- -
   | TMul            -- *
   | TDiv            -- /
   | TMod            -- %
+  | TSL             -- <<
+  | TSR             -- >>
   | TEq             -- ==
   | TNeq            -- !=
   | TLt             -- <

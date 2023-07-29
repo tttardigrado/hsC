@@ -9,9 +9,10 @@ import Syntax
 %error { parseError }
 
 %nonassoc ':' '?'
-%nonassoc '=' '+=' '-=' '*=' '/=' '%='
+%nonassoc '=' '+=' '-=' '*=' '/=' '%=' '<<=' '>>='
 %left '&&' '||'
 %nonassoc '>' '<' '<=' '>=' '==' '!=' '!' 
+%left '<<' '>>' 
 %left '+' '-'
 %left '*' '/' '%'
 
@@ -29,6 +30,8 @@ import Syntax
     '*'      { TMul      }
     '/'      { TDiv      }
     '%'      { TMod      }
+    '<<'     { TSL       }
+    '>>'     { TSR       }
 
     '='      { TSet      }
     '+='     { TAddEq    }
@@ -36,6 +39,8 @@ import Syntax
     '*='     { TMulEq    }
     '/='     { TDivEq    }
     '%='     { TModEq    }
+    '<<='    { TSLEq     }
+    '>>='    { TSREq     }
     
     '=='     { TEq       }
     '!='     { TNeq      }
@@ -75,12 +80,14 @@ Stmt  : break ';'                              { Break                          
       | Expr ';'                               { ExpStm $1                       }
       | '{' Stmts '}'                          { Blk    $2                       } 
       | let var ':' Type '=' Expr ';'          { Let    $2 $4 $6                 }
-      | var '='  Expr ';'                      { Set    $1 $3                    }
-      | var '+=' Expr ';'                      { Set    $1 (BOp Add (Var $1) $3) }
-      | var '-=' Expr ';'                      { Set    $1 (BOp Sub (Var $1) $3) }
-      | var '*=' Expr ';'                      { Set    $1 (BOp Mul (Var $1) $3) }
-      | var '/=' Expr ';'                      { Set    $1 (BOp Div (Var $1) $3) }
-      | var '%=' Expr ';'                      { Set    $1 (BOp Mod (Var $1) $3) }
+      | var '='   Expr ';'                     { Set    $1 $3                    }
+      | var '+='  Expr ';'                     { Set    $1 (BOp Add (Var $1) $3) }
+      | var '-='  Expr ';'                     { Set    $1 (BOp Sub (Var $1) $3) }
+      | var '*='  Expr ';'                     { Set    $1 (BOp Mul (Var $1) $3) }
+      | var '/='  Expr ';'                     { Set    $1 (BOp Div (Var $1) $3) }
+      | var '%='  Expr ';'                     { Set    $1 (BOp Mod (Var $1) $3) }
+      | var '<<=' Expr ';'                     { Set    $1 (BOp SL  (Var $1) $3) }
+      | var '>>=' Expr ';'                     { Set    $1 (BOp SR  (Var $1) $3) }
       | while '(' Expr ')' Stmt                { While  $3 $5                    }
       | if '(' Expr ')' Stmt                   { If     $3 $5 (Blk [])           }
       | if '(' Expr ')' Stmt else Stmt         { If     $3 $5 $7                 }
@@ -114,6 +121,8 @@ Expr  : var                                    { Var  $1       }
       | Expr '*'  Expr                         { BOp Mul $1 $3 }
       | Expr '/'  Expr                         { BOp Div $1 $3 }
       | Expr '%'  Expr                         { BOp Mod $1 $3 }
+      | Expr '<<' Expr                         { BOp SL  $1 $3 }
+      | Expr '>>' Expr                         { BOp SR  $1 $3 }
       | Expr '==' Expr                         { BOp Eq  $1 $3 }
       | Expr '!=' Expr                         { BOp Neq $1 $3 }
       | Expr '<'  Expr                         { BOp Lt  $1 $3 }
