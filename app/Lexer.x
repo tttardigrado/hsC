@@ -14,6 +14,7 @@ $white+                                     ;
 -- Types
 "int"                                       { \_ -> TTInt  }
 "bool"                                      { \_ -> TTBool }
+"void"                                      { \_ -> TTVoid }
 
 -- Attributions
 "="                                         { \_ -> TSet   }
@@ -80,6 +81,7 @@ data Token
   -- Types
   | TTInt           -- int
   | TTBool          -- bool
+  | TTVoid          -- void
   -- Assignement
   | TSet            -- =
   | TAddEq          -- +=

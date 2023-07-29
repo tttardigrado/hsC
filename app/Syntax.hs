@@ -1,92 +1,48 @@
 module Syntax where
 
--- Alias for a String as an Identifier
 type Ident = String
 
--- Enum of Arithmetic operations
-data AOp = Add | Sub | Mul | Div | Mod
-  deriving (Enum, Eq)
-
--- Enum of Comparisson operations
-data COp = Eq | Neq | Lt | Gt | Leq | Geq
-  deriving (Enum, Eq)
-
--- Enum of boolean operations
-data BOp = And | Or
-  deriving (Enum, Eq)
-
--- Enum of valid Types
-data Type = TyInt | TyBool
-  deriving (Enum, Eq)
-
--- Integer Expressions
-data Expr
-  = Var  Ident          -- x
-  | Int  Int            -- n
-  | Bool Bool           -- T or F
-  | Aop  AOp Expr Expr  -- e ∘ e
-  | Cop  COp Expr Expr  -- b ⪯ b
-  | Bop  BOp Expr Expr  -- e ∘ e
-  | Not  Expr           -- !e
-  | EIf  Expr Expr Expr -- (e) ? e : e
-  deriving (Eq)
-
--- Statements
-data Stmt
-  = Break                      -- break;
-  | Continue                   -- continue;
-  | Let   Ident Type Expr      -- let x: t = e;
-  | Print Expr                 -- print(i);
-  | Set   Ident Expr           -- x = i;
-  | While Expr Stmt            -- while (b) s
-  | For   Ident Expr Expr Stmt -- for (x; e; e) s
-  | If    Expr Stmt Stmt       -- if (b) s else s
-  | Blk   [Stmt]               -- { s; s; ... s; }
+data Type
+  = IntT
+  | BoolT
+  | VoidT
+  | FunT [Type] Type
   deriving (Show, Eq)
 
+data BinOp
+  = Add | Sub | Mul | Div | Mod | SL | SR
+  | Leq | Geq | Lt  | Gt
+  | Eq  | Neq
+  | And | Or
+  deriving (Show, Eq)
 
--- Precedence and Enum -> Function conversion 
+data UnrOp
+  = Not | Neg | Print
+  deriving (Show, Eq)
 
-precAOp :: AOp -> Int
-precAOp = (!!) [7,7,8,8,8] . fromEnum
+data Expr
+  = Var  Ident
+  | Bool Bool
+  | Int  Int
+  | BOp  BinOp Expr Expr
+  | UOp  UnrOp Expr
+  | EIf  Expr  Expr Expr
+  | Call Ident [Expr]
+  deriving (Show)
 
-aToOp :: AOp -> (Int -> Int -> Int)
-aToOp = (!!) [(+),(-),(*),div,mod] . fromEnum
+data Stmt
+  = Break
+  | Continue
+  | ExpStm Expr
+  | While  Expr Stmt
+  | For    Ident Expr Expr Stmt
+  | If     Expr Stmt Stmt
+  | Let    Ident Type Expr
+  | Set    Ident Expr
+  | Func   Ident [Arg] Type Stmt
+  | Return Expr
+  | Blk    [Stmt]
+  deriving Show
 
-cToOp :: COp -> (Int -> Int -> Bool)
-cToOp = (!!) [(==),(/=),(<),(>),(<=),(>=)] . fromEnum
 
-bToOp :: BOp -> (Bool -> Bool -> Bool)
-bToOp = (!!) [(&&),(||)] . fromEnum
-
-
--- Instanciations of Show
-
-instance Show AOp where
-  show = (!!) [" + ", " - ", " * ", " / ", " % "] . fromEnum
-
-instance Show COp where
-  show = (!!) [" == ", " != ", " < ", " > ", " <= ", ">="] . fromEnum
-
-instance Show BOp where
-  show = (!!) [" && ", " || "] . fromEnum
-
-instance Show Type where
-  show = (!!) ["int", "bool"] . fromEnum
-
-instance Show Expr where
-  showsPrec p (Var x) = showsPrec p x
-  showsPrec p (Int n) = showsPrec p n
-  showsPrec p (Bool b) = showsPrec p b
-  showsPrec p (Aop o e1 e2) = let q = precAOp o
-    in showParen (p >= q) $ showsPrec q e1 . showString (show o) . showsPrec q e2  
-  showsPrec p (Cop o e1 e2) = let q = 6
-    in showParen (p >= q) $ showsPrec q e1 . showString (show o) . showsPrec q e2  
-  showsPrec p (Bop o e1 e2) = let q = 5
-    in showParen (p >= q) $ showsPrec q e1 . showString (show o) . showsPrec q e2  
-  showsPrec p (Not e) = let q = 9
-    in showParen (p >= q) $ showString "!" . showsPrec q e
-  showsPrec p (EIf b e1 e2) = let q = 4
-    in showParen (p >= q) $ showsPrec q b
-                          . showString " ? " . showsPrec q e1
-                          . showString " : " . showsPrec q e2
+type Arg = (Ident, Type)
