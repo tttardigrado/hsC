@@ -108,7 +108,7 @@ checkStmt env rty stm = case stm of
     Nothing -> do
       let ft = FunT (map snd args) ty
       checkStmt ((f, ft) : args ++ env) (Just ty) st
-      Right $ (f, ty) : env
+      Right $ (f, ft) : env
 
   Return exp -> case rty of
     Nothing -> Left "Return used outside of a function"

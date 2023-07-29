@@ -59,6 +59,8 @@ $digit+                                     { \s -> TInt (read s) }
 "for"                                       { \_ -> TFor   }
 "break"                                     { \_ -> TBreak }
 "continue"                                  { \_ -> TCont  }
+"fun"                                       { \_ -> TFun   }
+"return"                                    { \_ -> TRet   }
 
 -- Identifier
 [$alpha \_] [$alpha $digit \_]*             { \s -> TIdent s }
@@ -71,6 +73,7 @@ $digit+                                     { \s -> TInt (read s) }
 ";"	                                        { \_ -> TSemi   }
 ":"	                                        { \_ -> TDColon }
 "?"                                         { \_ -> TQMark  }
+","                                         { \_ -> TComma  }
 
 {
 
@@ -112,6 +115,7 @@ data Token
   | TSemi           -- ;
   | TDColon         -- :
   | TQMark          -- ?
+  | TComma          -- ,
   -- Identifiers
   | TLet            -- let
   | TIf             -- if
@@ -122,6 +126,8 @@ data Token
   | TBreak          -- break
   | TCont           -- continue
   | TPrint          -- print
+  | TFun            -- fun
+  | TRet            -- return
   deriving (Show)
 
 
