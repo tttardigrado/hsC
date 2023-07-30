@@ -1,9 +1,10 @@
 module TypeCheck where
 import Syntax
+import SymTable
 
 type Res a = Either String a
 
-type Env = [(String, Type)]
+type Env = Table Type
 
 
 -- checks if the expression [[exp]] has type [[ty]] inside the environment [[env]]
@@ -18,7 +19,7 @@ typeOfExpr :: Env -> Expr -> Res Type
 typeOfExpr env exp = case exp of
   Int n  -> Right IntT
   Bool b -> Right BoolT
-  Var x  -> case lookup x env of
+  Var x  -> case find x env of
     Just ty -> Right ty
     Nothing -> Left "variable not found"
   
@@ -55,7 +56,7 @@ typeOfExpr env exp = case exp of
     checkExpr env ty' e2
     Right ty' -- bool ? a : a -> a
   
-  Call fun exs -> case lookup fun env of
+  Call fun exs -> case find fun env of
     Just (FunT argTys ty) -> do
       expTys <- mapM (typeOfExpr env) exs
       if length expTys == length argTys && and (zipWith (==) expTys argTys)
@@ -82,7 +83,7 @@ checkStmt env rty stm = case stm of
   For i strt end st -> do
     checkExpr env IntT strt
     checkExpr env IntT end
-    checkStmt ((i, IntT) : env) rty st
+    checkStmt (updt i IntT env) rty st
     Right env
 
   If ex e1 e2 -> do
@@ -91,11 +92,11 @@ checkStmt env rty stm = case stm of
     checkStmt env rty e2
     Right env
 
-  Let var ty exp -> case lookup var env of
+  Let var ty exp -> case find var env of
     Just  _ -> Left "Variable redefinition"
     Nothing -> do
       checkExpr env ty exp
-      Right $ (var,ty) : env
+      Right $ updt var ty env
 
   Set var ex -> case lookup var env of
     Nothing -> Left "Variable not defined"
@@ -107,8 +108,8 @@ checkStmt env rty stm = case stm of
     Just  _ -> Left "Function redefinition"
     Nothing -> do
       let ft = FunT (map snd args) ty
-      checkStmt ((f, ft) : args ++ env) (Just ty) st
-      Right $ (f, ft) : env
+      checkStmt (updt f ft $ extd args env) (Just ty) st
+      Right $ updt f ft env
 
   Return exp -> case rty of
     Nothing -> Left "Return used outside of a function"
