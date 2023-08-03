@@ -2,6 +2,9 @@ module SymTable where
 
 type Table a = [(String, a)]
 
+empty :: Table a
+empty = []
+
 -- find the value of a given key in the table
 find :: String -> Table a -> Maybe a
 find = lookup

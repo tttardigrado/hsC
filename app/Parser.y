@@ -75,6 +75,12 @@ import Syntax
 
 %%
 
+Prog  : {- empty -}                            { []        }
+      | Fun Prog                               { ($1 : $2) }
+
+Fun   : fun var '(' Args ')' ':' Type '=' Stmt { Fun   $2 $4 $7 $9 }
+
+
 Stmt  : break ';'                              { Break                           }
       | continue ';'                           { Continue                        } 
       | Expr ';'                               { ExpStm $1                       }
@@ -92,7 +98,6 @@ Stmt  : break ';'                              { Break                          
       | if '(' Expr ')' Stmt                   { If     $3 $5 (Blk [])           }
       | if '(' Expr ')' Stmt else Stmt         { If     $3 $5 $7                 }
       | for '(' var ';' Expr ';' Expr ')' Stmt { For    $3 $5 $7 $9              }
-      | fun var '(' Args ')' ':' Type '=' Stmt { Func   $2 $4 $7 $9              }
       | return Expr ';'                        { Return $2                       }
 
 

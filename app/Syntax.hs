@@ -16,6 +16,9 @@ data BinOp
   | And | Or
   deriving (Show, Eq)
 
+isRelOp :: BinOp -> Bool
+isRelOp = (`elem` [Leq, Geq, Lt, Gt, Eq, Neq])
+
 data UnrOp
   = Not | Neg | Print
   deriving (Show, Eq)
@@ -39,10 +42,13 @@ data Stmt
   | If     Expr Stmt Stmt        -- if (exp) stm else stm
   | Let    Ident Type Expr       -- let var: typ = exp;
   | Set    Ident Expr            -- var = exp;
-  | Func   Ident [Arg] Type Stmt -- fn var(arg: typ, arg: typ, ... ): typ = stm
   | Return Expr                  -- return exp;
   | Blk    [Stmt]                -- { stm; stm; ... }
   deriving Show
 
+data Fun = Fun Ident [Arg] Type Stmt
+  deriving Show -- fun f(a1: t1, a2:t2, ...): ty = stm
 
 type Arg = (Ident, Type) -- arg: typ
+
+type Program = [Fun] -- a program is a list of functions

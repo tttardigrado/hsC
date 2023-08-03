@@ -66,9 +66,9 @@ typeOfExpr env exp = case exp of
 
 
 -- check if a statement [[stm]] is well-typed inside the environment [[env]]
--- and return statements return rty
-checkStmt :: Env -> Maybe Type -> Stmt -> Res Env
-checkStmt env rty stm = case stm of
+-- and return statements return [[ty]]
+checkStmt :: Env -> Type -> Stmt -> Res Env
+checkStmt env ty stm = case stm of
   Break -> Right env
   Continue -> Right env
   ExpStm ex -> do 
@@ -77,19 +77,19 @@ checkStmt env rty stm = case stm of
 
   While ex st -> do
     checkExpr env BoolT ex
-    checkStmt env rty st
+    checkStmt env ty st
     Right env
 
   For i strt end st -> do
     checkExpr env IntT strt
     checkExpr env IntT end
-    checkStmt (updt i IntT env) rty st
+    checkStmt (updt i IntT env) ty st
     Right env
 
   If ex e1 e2 -> do
     checkExpr env BoolT ex
-    checkStmt env rty e1
-    checkStmt env rty e2
+    checkStmt env ty e1
+    checkStmt env ty e2
     Right env
 
   Let var ty exp -> case find var env of
@@ -98,27 +98,38 @@ checkStmt env rty stm = case stm of
       checkExpr env ty exp
       Right $ updt var ty env
 
-  Set var ex -> case lookup var env of
+  Set var ex -> case find var env of
     Nothing -> Left "Variable not defined"
     Just ty -> do
       checkExpr env ty ex
       Right env
-  
-  Func f args ty st -> case lookup f env of
-    Just  _ -> Left "Function redefinition"
-    Nothing -> do
-      let ft = FunT (map snd args) ty
-      checkStmt (updt f ft $ extd args env) (Just ty) st
-      Right $ updt f ft env
 
-  Return exp -> case rty of
-    Nothing -> Left "Return used outside of a function"
-    Just ty -> do 
+  Return exp -> do 
       checkExpr env ty exp
       Right env
   
   Blk [] -> Right env
   Blk (st:sts) -> do
-    env' <- checkStmt env rty st
-    checkStmt env' rty $ Blk sts
+    env' <- checkStmt env ty st
+    checkStmt env' ty $ Blk sts
     Right env
+
+
+-- check if a function typechecks in the environment [[env]]
+checkFun :: Env -> Fun -> Res Env
+checkFun env (Fun f args ty stm) = case find f env of
+    Just  _ -> Left "Function redefinition"
+    Nothing -> do
+      let ft = FunT (map snd args) ty -- function type
+      checkStmt (updt f ft $ extd args env) ty stm
+      Right $ updt f ft env
+
+
+-- check if a program typechecks
+check :: Program -> Res ()
+check = aux empty where
+  aux env p = case p of
+    []   -> Right ()
+    f:fs -> do
+      env' <- checkFun env f
+      aux env' fs
