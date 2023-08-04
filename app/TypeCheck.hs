@@ -66,30 +66,30 @@ typeOfExpr env exp = case exp of
 
 
 -- check if a statement [[stm]] is well-typed inside the environment [[env]]
--- and return statements return [[ty]]
-checkStmt :: Env -> Type -> Stmt -> Res Env
-checkStmt env ty stm = case stm of
-  Break -> Right env
-  Continue -> Right env
+-- return statements return [[ty]] and break/continue only appear inside loops [[inLoop]]
+checkStmt :: Env -> Bool -> Type -> Stmt -> Res Env
+checkStmt env inLoop ty stm = case stm of
+  Break -> if inLoop then Right env else Left "break used outside of a loop"
+  Continue -> if inLoop then Right env else Left "continue used outside of a loop"
   ExpStm ex -> do 
     checkExpr env VoidT ex
     Right env
 
   While ex st -> do
     checkExpr env BoolT ex
-    checkStmt env ty st
+    checkStmt env True ty st
     Right env
 
   For i strt end st -> do
     checkExpr env IntT strt
     checkExpr env IntT end
-    checkStmt (updt i IntT env) ty st
+    checkStmt (updt i IntT env) True ty st
     Right env
 
   If ex e1 e2 -> do
     checkExpr env BoolT ex
-    checkStmt env ty e1
-    checkStmt env ty e2
+    checkStmt env inLoop ty e1
+    checkStmt env inLoop ty e2
     Right env
 
   Let var ty exp -> case find var env of
@@ -110,8 +110,8 @@ checkStmt env ty stm = case stm of
   
   Blk [] -> Right env
   Blk (st:sts) -> do
-    env' <- checkStmt env ty st
-    checkStmt env' ty $ Blk sts
+    env' <- checkStmt env inLoop ty st
+    checkStmt env' inLoop ty $ Blk sts
     Right env
 
 
@@ -121,7 +121,7 @@ checkFun env (Fun f args ty stm) = case find f env of
     Just  _ -> Left "Function redefinition"
     Nothing -> do
       let ft = FunT (map snd args) ty -- function type
-      checkStmt (updt f ft $ extd args env) ty stm
+      checkStmt (updt f ft $ extd args env) False ty stm
       Right $ updt f ft env
 
 

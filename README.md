@@ -7,7 +7,7 @@ Haskell compiler for a simple C-like language.
 * Keywords
     - [X] Add `continue` keyword
     - [X] Add `break` keyword
-    - [ ] Add a checker to make sure `continue` and `break` are only used inside loops
+    - [X] Add a checker to make sure `continue` and `break` are only used inside loops
     - [X] Remove `skip` keyword
 * Compiler phases
     - [X] Add TypeChecker
@@ -17,7 +17,6 @@ Haskell compiler for a simple C-like language.
     - [ ] Add Code Generation
 * Features
     - [X] Add Functions
-    - [ ] Add First Class functions
     - [ ] Add Arrays
     - [ ] Add Do While Loop
     - [ ] Add multiline comments
