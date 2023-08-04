@@ -1,4 +1,4 @@
-module TypeCheck where
+module TypeCheck (check) where
 import Syntax
 import SymTable
 

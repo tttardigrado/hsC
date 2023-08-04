@@ -17,6 +17,7 @@ Haskell compiler for a simple C-like language.
     - [ ] Add Code Generation
 * Features
     - [X] Add Functions
+    - [X] Add function prototypes
     - [ ] Add Arrays
     - [ ] Add Do While Loop
     - [ ] Add multiline comments
