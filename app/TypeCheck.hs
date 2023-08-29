@@ -108,7 +108,8 @@ checkStmt env inLoop ty stm = case stm of
       checkExpr env ty exp
       Right env
   
-  Blk [] -> Right env
+  Blk [] -> if ty == VoidT
+    then Right env else Left "Non-void function doesn't return a value" 
   Blk (st:sts) -> do
     env' <- checkStmt env inLoop ty st
     checkStmt env' inLoop ty $ Blk sts
